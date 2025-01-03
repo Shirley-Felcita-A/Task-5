@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Social Media</title>
+    <style>
+        /* styles.css */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+
+        header nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        .profile-container, .post-container {
+            width: 90%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .post {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .post .actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comment-section {
+            margin-top: 10px;
+        }
+
+        .comment-section textarea {
+            width: 80%;
+        }
+
+        .comment-section button {
+            width: 15%;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to Simple Social</h1>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Explore</a>
+            <a href="#">Profile</a>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <h2>Create Profile</h2>
+        <form id="profileForm">
+            <input type="text" id="username" placeholder="Enter Username" required>
+            <input type="file" id="profilePicture" accept="image/*">
+            <textarea id="bio" placeholder="Write your bio"></textarea>
+            <button type="submit">Create Profile</button>
+        </form>
+    </div>
+
+    <div class="post-container">
+        <h2>Feed</h2>
+        <form id="postForm">
+            <textarea id="postContent" placeholder="What's on your mind?" required></textarea>
+            <button type="submit">Post</button>
+        </form>
+
+        <div id="posts"></div>
+    </div>
+
+    <script>
+        // app.js
+
+        // Create Profile
+        document.getElementById("profileForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById("username").value;
+            const bio = document.getElementById("bio").value;
+            const profilePicture = document.getElementById("profilePicture").files[0];
+
+            if(username && bio) {
+                alert(`Profile created for ${username}`);
+                // For simplicity, let's just log the profile details
+                console.log(`Username: ${username}`);
+                console.log(`Bio: ${bio}`);
+                if(profilePicture) {
+                    console.log(`Profile Picture: ${profilePicture.name}`);
+                }
+                // Clear the form
+                document.getElementById("profileForm").reset();
+            } else {
+                alert("Please fill in all fields");
+            }
+        });
+
+        // Create Post
+        document.getElementById("postForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const postContent = document.getElementById("postContent").value;
+
+            if(postContent) {
+                const postElement = document.createElement("div");
+                postElement.classList.add("post");
+
+                // Post Content
+                const content = document.createElement("p");
+                content.textContent = postContent;
+                postElement.appendChild(content);
+
+                // Like and Comment Actions
+                const actions = document.createElement("div");
+                actions.classList.add("actions");
+                const likeButton = document.createElement("button");
+                likeButton.textContent = "Like";
+                const commentButton = document.createElement("button");
+                commentButton.textContent = "Comment";
+                actions.appendChild(likeButton);
+                actions.appendChild(commentButton);
+                postElement.appendChild(actions);
+
+                // Comment Section
+                const commentSection = document.createElement("div");
+                commentSection.classList.add("comment-section");
+                const commentInput = document.createElement("textarea");
+                commentInput.placeholder = "Add a comment...";
+                const commentSubmit = document.createElement("button");
+                commentSubmit.textContent = "Post";
+                commentSection.appendChild(commentInput);
+                commentSection.appendChild(commentSubmit);
+                postElement.appendChild(commentSection);
+
+                // Append the post to the posts container
+                document.getElementById("posts").appendChild(postElement);
+
+                // Clear the post form
+                document.getElementById("postForm").reset();
+            } else {
+                alert("Please write something to post");
+            }
+        });
+
+        // Handle Likes
+        document.addEventListener("click", function(e) {
+            if(e.target && e.target.textContent === "Like") {
+                const post = e.target.closest(".post");
+                post.classList.toggle("liked");
+                e.target.textContent = post.classList.contains("liked") ? "Liked" : "Like";
+            }
+        });
+
+        // Handle Comment Posting
+        document.addEventListener("click", function(e) {
+            if(e.target && e.target.textContent === "Post") {
+                const commentInput = e.target.previousElementSibling;
+                const commentText = commentInput.value;
+                
+                if(commentText) {
+                    const comment = document.createElement("p");
+                    comment.textContent = commentText;
+                    e.target.closest(".comment-section").insertBefore(comment, commentInput);
+                    commentInput.value = ""; // Clear comment box
+                } else {
+                    alert("Please write a comment");
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
